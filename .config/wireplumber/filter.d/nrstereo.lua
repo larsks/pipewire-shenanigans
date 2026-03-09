@@ -1,7 +1,7 @@
 local args_string = [[
 {
   "playback.props": {
-    "node.name": "nr_output",
+    "node.name": "nr_stereo.output",
     "audio.channels": 2,
     "audio.position": [
       "FL",
@@ -11,7 +11,7 @@ local args_string = [[
   },
   "node.description": "Noise Repellant (Stereo)",
   "capture.props": {
-    "node.name": "nr_input",
+    "node.name": "nr_stereo.input",
     "audio.channels": 2,
     "audio.position": [
       "FL",

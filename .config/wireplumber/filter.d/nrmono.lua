@@ -1,9 +1,5 @@
 local args_string = [[
 {
-  "playback.props": {
-    "node.name": "nr_output",
-    "media.class": "Audio/Source"
-  },
   "media.name": "Noise Repellant (Mono)",
   "filter.graph": {
     "nodes": [
@@ -21,11 +17,15 @@ local args_string = [[
       }
     ]
   },
-  "node.passive": true,
   "capture.props": {
-    "node.name": "nr_input",
+    "node.name": "nr_mono.input",
     "media.class": "Audio/Sink"
   },
+  "playback.props": {
+    "node.name": "nr_mono.output",
+    "media.class": "Audio/Source"
+  },
+  "node.passive": true,
   "audio.position": [
     "FL"
   ],

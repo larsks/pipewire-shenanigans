@@ -1,0 +1,8 @@
+ucontrol:capture_FL nr_input:playback_FL
+ucontrol:capture_FR nr_input:playback_FR
+nr_output:capture_FL hpf_input:playback_FL
+nr_output:capture_FR hpf_input:playback_FR
+hpf_output:capture_FL lpf_input:playback_FL
+hpf_output:capture_FR lpf_input:playback_FR
+lpf_output:capture_FL ucontrol:playback_FL
+lpf_output:capture_FR ucontrol:playback_FR

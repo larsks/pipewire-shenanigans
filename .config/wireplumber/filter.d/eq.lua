@@ -88,7 +88,7 @@ local args_string = [[
   },
   "playback.props": {
     "node.name": "effect_output.eq6",
-    "node.passive": true
+    "media.class": "Audio/Source"
   },
   "audio.position": [
     "FL",

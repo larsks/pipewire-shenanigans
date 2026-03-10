@@ -27,7 +27,7 @@ local args_string = [[
   },
   "node.passive": true,
   "audio.position": [
-    "FL"
+    "MONO"
   ],
   "node.description": "Noise Repellant (Mono)",
   "audio.channels": 1

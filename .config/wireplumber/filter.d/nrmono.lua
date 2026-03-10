@@ -14,6 +14,20 @@ local args_string = [[
           "adaptive_noise": 1,
           "tonal_reduction": 50.000000
         }
+      },
+      {
+        "type": "builtin",
+        "name": "gain",
+        "label": "mixer",
+        "control": {
+          "Gain 1": 4
+        }
+      }
+    ],
+    "links": [
+      {
+        "output": "nr:output",
+        "input": "gain:In 1"
       }
     ]
   },

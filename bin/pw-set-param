@@ -131,7 +131,7 @@ def get_prop_types(dump, node_id):
         info = entry.get("info", {})
 
         for block in info.get("params", {}).get("PropInfo", []):
-            name = block.get("name")
+            name = block.get("name", block.get("id"))
             if not name:
                 continue
 
@@ -145,7 +145,7 @@ def get_prop_types(dump, node_id):
                 "type": type_field,
                 # True  -> set via Props.params (e.g. nr:bypass)
                 # False -> set as a direct Props property (e.g. volume)
-                "is_param": block.get("params", True),
+                "is_param": block.get("params", False),
             }
 
             # Pull min/max/default out of the nested "type" dict
@@ -159,12 +159,6 @@ def get_prop_types(dump, node_id):
                     info_entry[key] = type_constraints[key]
 
             prop_info[name] = info_entry
-
-    # Add synthetic entries for known direct Props (e.g. volume) if not
-    # already present from PropInfo (they never appear in PropInfo).
-    for name, meta in DIRECT_PROPS.items():
-        if name not in prop_info:
-            prop_info[name] = dict(meta)
 
     return prop_info
 
@@ -474,7 +468,7 @@ def main():
         print(f"Setting '{param_name}' = {value}", file=sys.stderr)
 
     # Apply
-    is_param = prop_info_entry.get("is_param", True) if prop_info_entry else True
+    is_param = prop_info_entry.get("is_param", False)
     success = set_param(node_id, param_name, value, is_param=is_param)
     sys.exit(0 if success else 1)
 

@@ -1,7 +1,7 @@
 [Unit]
 Description=Pipewire Connections
-After=pipewire.service wireplumber.service
-Requires=pipewire.service wireplumber.service
+After=pipewire-filters.target
+Requires=pipewire-filters.target
 ConditionPathExists=/home/jack/connections.tab
 
 [Service]

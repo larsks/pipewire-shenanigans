@@ -1,3 +1,0 @@
-scarlett-in:capture_FL nr_mono.input:playback_MONO
-nr_mono.output:capture_MONO scarlett-out:playback_FL
-nr_mono.output:capture_MONO scarlett-out:playback_FR

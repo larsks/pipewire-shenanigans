@@ -1,10 +1,5 @@
 -- audio-links.lua
 -- Maintains fixed PipeWire port-to-port links using WirePlumber's event/hook API.
---
--- Links maintained:
---   nr_mono.output:capture_MONO  -> scarlett-out:playback_FL
---   nr_mono.output:capture_MONO  -> scarlett-out:playback_FR
---   scarlett-in:capture_FL       -> nr_mono.input:playback_MONO
 
 local LINKS = {
 	{ output = "gain.output:capture_MONO", input = "scarlett-out:playback_FL" },
@@ -15,16 +10,6 @@ local LINKS = {
 
 local active_links = {}
 local log = Log.open_topic("audio-links")
-
-local function log_info(msg)
-	log:info("[audio-links] " .. msg)
-end
-local function log_warn(msg)
-	log:warning("[audio-links] " .. msg)
-end
-local function log_debug(msg)
-	log:debug("[audio-links] " .. msg)
-end
 
 local function link_key(out_alias, in_alias)
 	return out_alias .. "->" .. in_alias
@@ -40,7 +25,7 @@ local function find_port(source, node_name, port_name)
 		Constraint({ "node.name", "=", node_name, type = "pw-global" }),
 	})
 	if not node then
-		log_info("find_port: node not found: " .. node_name)
+		log:info("find_port: node not found: " .. node_name)
 		return nil
 	end
 	for port in
@@ -48,7 +33,7 @@ local function find_port(source, node_name, port_name)
 			Constraint({ "port.name", "=", port_name, type = "pw" }),
 		})
 	do
-		log_debug(
+		log:debug(
 			"find_port: found "
 				.. node_name
 				.. ":"
@@ -58,17 +43,17 @@ local function find_port(source, node_name, port_name)
 		)
 		return port
 	end
-	log_info("find_port: port not found: " .. port_name .. " on node " .. node_name)
+	log:info("find_port: port not found: " .. port_name .. " on node " .. node_name)
 	return nil
 end
 
 local function try_create_links(source)
-	log_info("try_create_links called")
+	log:info("try_create_links called")
 	for _, spec in ipairs(LINKS) do
 		local key = link_key(spec.output, spec.input)
 
 		if active_links[key] then
-			log_info("skipping already active link: " .. key)
+			log:info("skipping already active link: " .. key)
 		else
 			local out_node, out_port = parse_alias(spec.output)
 			local in_node, in_port = parse_alias(spec.input)
@@ -76,14 +61,14 @@ local function try_create_links(source)
 			local out_p = find_port(source, out_node, out_port)
 			local in_p = find_port(source, in_node, in_port)
 
-			log_info(
+			log:info(
 				string.format(
 					"  output %q -> %s",
 					spec.output,
 					out_p and ("id=" .. (out_p.properties["object.id"] or "?")) or "NOT FOUND"
 				)
 			)
-			log_info(
+			log:info(
 				string.format(
 					"  input  %q -> %s",
 					spec.input,
@@ -92,7 +77,7 @@ local function try_create_links(source)
 			)
 
 			if out_p and in_p then
-				log_info("creating link: " .. key)
+				log:info("creating link: " .. key)
 				local link = Link("link-factory", {
 					["link.output.node"] = out_p.properties["node.id"],
 					["link.output.port"] = out_p.properties["object.id"],
@@ -104,35 +89,35 @@ local function try_create_links(source)
 				active_links[key] = "pending"
 				link:activate(Feature.Proxy.BOUND, function(l, e)
 					if e then
-						log_warn("failed to activate link " .. key .. ": " .. tostring(e))
+						log:warn("failed to activate link " .. key .. ": " .. tostring(e))
 						active_links[key] = nil
 					else
-						log_info("link active: " .. key .. " bound-id=" .. tostring(l["bound-id"]))
+						log:info("link active: " .. key .. " bound-id=" .. tostring(l["bound-id"]))
 						active_links[key] = l
 					end
 				end)
 			else
-				log_info("cannot create link yet, ports missing: " .. key)
+				log:info("cannot create link yet, ports missing: " .. key)
 			end
 		end
 	end
 end
 
 local function clear_links_for_node(name)
-	log_info("clearing link records for node: " .. name)
+	log:info("clearing link records for node: " .. name)
 	local cleared = false
 	for _, spec in ipairs(LINKS) do
 		local out_node = parse_alias(spec.output)
 		local in_node = parse_alias(spec.input)
 		if name == out_node or name == in_node then
 			local key = link_key(spec.output, spec.input)
-			log_info("clearing: " .. key .. " (was " .. tostring(active_links[key]) .. ")")
+			log:info("clearing: " .. key .. " (was " .. tostring(active_links[key]) .. ")")
 			active_links[key] = nil
 			cleared = true
 		end
 	end
 	if not cleared then
-		log_info("no link records matched node: " .. name)
+		log:info("no link records matched node: " .. name)
 	end
 end
 
@@ -150,7 +135,7 @@ SimpleEventHook({
 		local name = (node.properties and node.properties["node.name"])
 			or event:get_properties()["node.name"]
 			or "(unnamed)"
-		log_debug("node-added: " .. name)
+		log:debug("node-added: " .. name)
 
 		local relevant = false
 		for _, spec in ipairs(LINKS) do
@@ -163,7 +148,7 @@ SimpleEventHook({
 			return
 		end
 
-		log_info("node-added: relevant node: " .. name)
+		log:info("node-added: relevant node: " .. name)
 		local source = event:get_source()
 		try_create_links(source)
 	end,
@@ -180,7 +165,7 @@ SimpleEventHook({
 		-- On node-removed, node.properties may be gone; use event properties instead
 		local props = event:get_properties()
 		local name = props["node.name"] or "(unnamed)"
-		log_info("node-removed event: node.name=" .. name)
+		log:info("node-removed event: node.name=" .. name)
 
 		local relevant = false
 		for _, spec in ipairs(LINKS) do
@@ -190,13 +175,13 @@ SimpleEventHook({
 			end
 		end
 		if not relevant then
-			log_debug("node-removed: irrelevant node: " .. name)
+			log:debug("node-removed: irrelevant node: " .. name)
 			return
 		end
 
-		log_info("node-removed: relevant node: " .. name)
+		log:info("node-removed: relevant node: " .. name)
 		clear_links_for_node(name)
 	end,
 }):register()
 
-log_info("script loaded, hooks registered")
+log:info("script loaded, hooks registered")

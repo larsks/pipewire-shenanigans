@@ -72,7 +72,7 @@ local function try_create_links(source)
 				active_links[key] = "pending"
 				link:activate(Feature.Proxy.BOUND, function(l, e)
 					if e then
-						log:warn("failed to activate link " .. key .. ": " .. tostring(e))
+						log:warning("failed to activate link " .. key .. ": " .. tostring(e))
 						active_links[key] = nil
 					else
 						log:info("link active: " .. key .. " bound-id=" .. tostring(l["bound-id"]))

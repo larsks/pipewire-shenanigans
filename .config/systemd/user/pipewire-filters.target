@@ -1,2 +1,5 @@
 [Unit]
 Description=Pipewire plugins
+
+[Install]
+WantedBy=default.target

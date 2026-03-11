@@ -1,7 +1,7 @@
 [Unit]
 Description=Load pipewire filter %i
-After=pipewire-online.service
-Requires=pipewire-online.service
+After=wireplumber.service
+BindsTo=wireplumber.service
 
 [Service]
 Type=exec

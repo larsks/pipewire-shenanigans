@@ -1,5 +1,7 @@
 [Unit]
 Description=Pipewire plugins
+PartOf=wireplumber.service
+After=wireplumber.service
 
 [Install]
 WantedBy=default.target

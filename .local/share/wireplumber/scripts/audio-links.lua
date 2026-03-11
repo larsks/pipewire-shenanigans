@@ -48,7 +48,7 @@ local function find_port(source, node_name, port_name)
 end
 
 local function try_create_links(source)
-	log:info("try_create_links called")
+	log:debug("try_create_links called")
 	for _, spec in ipairs(LINKS) do
 		local key = link_key(spec.output, spec.input)
 
@@ -60,21 +60,6 @@ local function try_create_links(source)
 
 			local out_p = find_port(source, out_node, out_port)
 			local in_p = find_port(source, in_node, in_port)
-
-			log:info(
-				string.format(
-					"  output %q -> %s",
-					spec.output,
-					out_p and ("id=" .. (out_p.properties["object.id"] or "?")) or "NOT FOUND"
-				)
-			)
-			log:info(
-				string.format(
-					"  input  %q -> %s",
-					spec.input,
-					in_p and ("id=" .. (in_p.properties["object.id"] or "?")) or "NOT FOUND"
-				)
-			)
 
 			if out_p and in_p then
 				log:info("creating link: " .. key)

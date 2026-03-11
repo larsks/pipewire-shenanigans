@@ -8,7 +8,7 @@ local args_string = [[
         "name": "gain",
         "label": "mixer",
         "control": {
-          "Gain 1": 8
+          "Gain 1": 4
         }
       }
     ],

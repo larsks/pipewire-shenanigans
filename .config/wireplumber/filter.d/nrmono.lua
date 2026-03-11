@@ -15,21 +15,7 @@ local args_string = [[
           "tonal_reduction": 50.000000
         }
       },
-      {
-        "type": "builtin",
-        "name": "gain",
-        "label": "mixer",
-        "control": {
-          "Gain 1": 4
-        }
-      }
     ],
-    "links": [
-      {
-        "output": "nr:output",
-        "input": "gain:In 1"
-      }
-    ]
   },
   "capture.props": {
     "node.name": "nr_mono.input",

@@ -1,12 +1,10 @@
 -- audio-links.lua
 -- Maintains fixed PipeWire port-to-port links using WirePlumber's event/hook API.
 
-local LINKS = {
-	{ output = "gain.output:capture_MONO", input = "scarlett-out:playback_FL" },
-	{ output = "gain.output:capture_MONO", input = "scarlett-out:playback_FR" },
-	{ output = "nr_mono.output:capture_MONO", input = "gain.input:playback_MONO" },
-	{ output = "scarlett-in:capture_FL", input = "nr_mono.input:playback_MONO" },
-}
+-- Read arguments passed in configuration
+local args = ... or {}
+local config = args:parse()
+local LINKS = config.links or {}
 
 local active_links = {}
 local log = Log.open_topic("audio-links")

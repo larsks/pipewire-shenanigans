@@ -7,8 +7,9 @@
 --   scarlett-in:capture_FL       -> nr_mono.input:playback_MONO
 
 local LINKS = {
-  { output = "nr_mono.output:capture_MONO",  input = "scarlett-out:playback_FL"    },
-  { output = "nr_mono.output:capture_MONO",  input = "scarlett-out:playback_FR"    },
+  { output = "gain.output:capture_MONO",  input = "scarlett-out:playback_FL"    },
+  { output = "gain.output:capture_MONO",  input = "scarlett-out:playback_FR"    },
+  { output = "nr_mono.output:capture_MONO",  input = "gain.input:playback_MONO"    },
   { output = "scarlett-in:capture_FL",       input = "nr_mono.input:playback_MONO" },
 }
 

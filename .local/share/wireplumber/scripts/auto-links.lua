@@ -1,4 +1,4 @@
--- audio-links.lua
+-- auto-links.lua
 -- Maintains fixed PipeWire port-to-port links using WirePlumber's event/hook API.
 
 -- Read arguments passed in configuration
@@ -7,7 +7,7 @@ local config = args:parse()
 local LINKS = config.links or {}
 
 local active_links = {}
-local log = Log.open_topic("audio-links")
+local log = Log.open_topic("auto-links")
 
 local function link_key(out_alias, in_alias)
 	return out_alias .. "->" .. in_alias
@@ -105,7 +105,7 @@ local function clear_links_for_node(name)
 end
 
 SimpleEventHook({
-	name = "audio-links/node-added",
+	name = "auto-links/node-added",
 	interests = {
 		EventInterest({
 			Constraint({ "event.type", "=", "node-added" }),
@@ -138,7 +138,7 @@ SimpleEventHook({
 }):register()
 
 SimpleEventHook({
-	name = "audio-links/node-removed",
+	name = "auto-links/node-removed",
 	interests = {
 		EventInterest({
 			Constraint({ "event.type", "=", "node-removed" }),

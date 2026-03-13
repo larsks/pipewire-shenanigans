@@ -343,6 +343,16 @@ def main():
         action="store_true",
         help="Require exact node name match (no substring matching)",
     )
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Reset the parameter to its default value",
+    )
+    parser.add_argument(
+        "--reset-all",
+        action="store_true",
+        help="Reset all parameters to their default values",
+    )
 
     args = parser.parse_args()
 
@@ -357,8 +367,21 @@ def main():
         parser.error(
             "node_name is required (or use --list-nodes to see available nodes)"
         )
-    if not args.list and (args.param_name is None or args.value is None):
-        parser.error("param_name and value are required unless --list is used")
+
+    showing_value = (
+        args.param_name is not None
+        and args.value is None
+        and not args.reset
+        and not args.reset_all
+    )
+
+    if not args.list and not args.reset_all and args.param_name is None:
+        parser.error(
+            "param_name is required (or use --list, --reset-all, or --list-nodes)"
+        )
+    if not args.list and not args.reset and not args.reset_all and not showing_value:
+        if args.value is None:
+            parser.error("value is required (or use --reset)")
 
     # Load pw-dump
     print("Querying PipeWire...", file=sys.stderr)
@@ -433,6 +456,19 @@ def main():
         print_node_params(node_id, current_params, prop_types)
         sys.exit(0)
 
+    if args.reset_all:
+        errors = 0
+        for pname, info in prop_types.items():
+            if "default" not in info:
+                print(f"  Skipping '{pname}': no default known", file=sys.stderr)
+                continue
+            default = info["default"]
+            is_param = info.get("is_param", False)
+            print(f"  Resetting '{pname}' -> {default}", file=sys.stderr)
+            if not set_param(node_id, pname, default, is_param=is_param):
+                errors += 1
+        sys.exit(0 if errors == 0 else 1)
+
     param_name = args.param_name
 
     # Validate param name
@@ -451,8 +487,33 @@ def main():
             file=sys.stderr,
         )
 
-    # Coerce and validate value
     prop_info_entry = prop_types.get(param_name)
+
+    # Show current value when no value or action is specified
+    if showing_value:
+        if param_name in current_params:
+            print(current_params[param_name]["current"])
+        else:
+            print(
+                f"Error: No current value found for '{param_name}'", file=sys.stderr
+            )
+            sys.exit(1)
+        sys.exit(0)
+
+    # Reset to default
+    if args.reset:
+        if not prop_info_entry or "default" not in prop_info_entry:
+            print(
+                f"Error: No default known for '{param_name}'", file=sys.stderr
+            )
+            sys.exit(1)
+        value = prop_info_entry["default"]
+        is_param = prop_info_entry.get("is_param", False)
+        print(f"Resetting '{param_name}' to default: {value}", file=sys.stderr)
+        success = set_param(node_id, param_name, value, is_param=is_param)
+        sys.exit(0 if success else 1)
+
+    # Coerce and validate value
     value = coerce_value(args.value, prop_info_entry)
 
     is_valid, error_msg = validate_value(value, prop_info_entry, param_name)

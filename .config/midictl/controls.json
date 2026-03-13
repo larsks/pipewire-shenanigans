@@ -1,0 +1,22 @@
+[
+ { "channel": 1, "control": 41, "node": "nr_mono.input", "param": "nr:bypass", "min": 0, "max": 1 },
+ { "channel": 1, "control": 45, "node": "nr_mono.input", "param": "nr:Residual_listen", "min": 0, "max": 1 },
+ { "channel": 1, "control": 16, "node": "nr_mono.input", "param": "nr:reduction", "min": 0, "max": 40 },
+ { "channel": 1, "control": 17, "node": "nr_mono.input", "param": "nr:smoothing", "min": 0, "max": 100 },
+ { "channel": 1, "control": 18, "node": "nr_mono.input", "param": "nr:suppression", "min": 0, "max": 100 },
+ { "channel": 1, "control": 19, "node": "nr_mono.input", "param": "nr:tonal_reduction", "min": 0, "max": 48 }
+
+ { "channel": 1, "control": 0, "node": "eq12b.input", "param": "eq12b:p1_level", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 1, "node": "eq12b.input", "param": "eq12b:p2_level", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 2, "node": "eq12b.input", "param": "eq12b:p3_level", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 3, "node": "eq12b.input", "param": "eq12b:p4_level", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 4, "node": "eq12b.input", "param": "eq12b:p5_level", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 5, "node": "eq12b.input", "param": "eq12b:p6_level", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 6, "node": "eq12b.input", "param": "eq12b:p7_level", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 7, "node": "eq12b.input", "param": "eq12b:p8_level", "min": 0.015625, "max": 10 }
+
+ { "channel": 1, "control": 20, "node": "eq12b.input", "param": "eq12b:hp_freq", "min": 10, "max": 20000 }
+ { "channel": 1, "control": 21, "node": "eq12b.input", "param": "eq12b:lp_freq", "min":10, "max": 20000 }
+ { "channel": 1, "control": 22, "node": "eq12b.input", "param": "eq12b:level_in", "min": 0.015625, "max": 10 }
+ { "channel": 1, "control": 23, "node": "eq12b.input", "param": "eq12b:level_out", "min":0.015625, "max": 10 }
+]

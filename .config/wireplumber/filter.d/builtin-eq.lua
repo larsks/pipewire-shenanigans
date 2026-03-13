@@ -87,7 +87,7 @@ local args_string = [[
     ]
   },
   "playback.props": {
-    "node.name": "effect_output.eq6",
+    "node.name": "mixer.output",
     "media.class": "Audio/Source"
   },
   "audio.position": [
@@ -95,12 +95,12 @@ local args_string = [[
     "FR"
   ],
   "capture.props": {
-    "node.name": "effect_input.eq6",
+    "node.name": "mixer.input",
     "media.class": "Audio/Sink"
   },
   "audio.channels": 2,
-  "media.name": "Equalizer Sink",
-  "node.description": "Equalizer Sink"
+  "media.name": "Equalizer (Builtin)",
+  "node.description": "Equalizer (Builtin)"
 }
 ]]
 

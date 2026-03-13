@@ -71,6 +71,10 @@ local function try_create_links(source)
 				})
 				active_links[key] = "pending"
 				link:activate(Feature.Proxy.BOUND, function(l, e)
+					if active_links[key] ~= "pending" then
+						-- cleared during activation (node removed), discard
+						return
+					end
 					if e then
 						log:warning("failed to activate link " .. key .. ": " .. tostring(e))
 						active_links[key] = nil

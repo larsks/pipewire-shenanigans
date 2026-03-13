@@ -2,6 +2,7 @@
 Description=Load pipewire filter %i
 After=wireplumber.service
 BindsTo=wireplumber.service
+Before=pipewire-filters.target
 
 [Service]
 Type=exec

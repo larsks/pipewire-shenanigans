@@ -19,4 +19,6 @@
  { "channel": 1, "control": 21, "node": "eq12b.input", "param": "eq12b:lp_freq", "min":10, "max": 20000 }
  { "channel": 1, "control": 22, "node": "eq12b.input", "param": "eq12b:level_in", "min": 0.015625, "max": 10 }
  { "channel": 1, "control": 23, "node": "eq12b.input", "param": "eq12b:level_out", "min":0.015625, "max": 10 }
+
+ { "channel": 1, "control": 43, "node": "eq12b.input", "param": "eq12b:bypass", "min": 0, "max": 1 },
 ]

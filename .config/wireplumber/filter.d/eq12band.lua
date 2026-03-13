@@ -22,6 +22,7 @@ local args_string = [[
 		"hp_freq": 300.0,
 		"lp_freq": 4000.0,
 		"level_in": 6.0,
+		"level_out": 2.0,
 		"p4_level": 2.0
         }
       },

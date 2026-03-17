@@ -171,29 +171,6 @@ SimpleEventHook({
 	end,
 }):register()
 
-SimpleEventHook({
-	name = "auto-links/port-removed",
-	interests = {
-		EventInterest({
-			Constraint({ "event.type", "=", "port-removed" }),
-		}),
-	},
-	execute = function(event)
-		local props = event:get_properties()
-		local node_name = props["node.name"] or ""
-		local port_name = props["port.name"] or ""
-		local alias = node_name .. ":" .. port_name
-
-		log:info("port-removed event: port.name=" .. alias)
-		for _, spec in ipairs(LINKS) do
-			if alias == spec.output or alias == spec.input then
-				local key = link_key(spec.output, spec.input)
-				log:info("port-removed: clearing link: " .. key)
-				active_links[key] = nil
-			end
-		end
-	end,
-}):register()
 
 SimpleEventHook({
 	name = "auto-links/port-added",
@@ -203,13 +180,19 @@ SimpleEventHook({
 		}),
 	},
 	execute = function(event)
-		local props = event:get_properties()
-		local node_name = props["node.name"] or ""
-		local port_name = props["port.name"] or ""
+		local port = event:get_subject()
+		local node_id = port.properties and port.properties["node.id"]
+		local port_name = port.properties and port.properties["port.name"] or ""
+		local source = event:get_source()
+		local node_om = source:call("get-object-manager", "node")
+		local node = node_id and node_om:lookup({
+			Constraint({ "object.id", "=", node_id, type = "pw-global" }),
+		})
+		local node_name = (node and node.properties and node.properties["node.name"]) or ""
 		local alias = node_name .. ":" .. port_name
 		local relevant = false
 
-		log:info("port-added event: port.name=" .. alias)
+		log:info("port-added event: alias=" .. alias)
 		for _, spec in ipairs(LINKS) do
 			if alias == spec.output or alias == spec.input then
 				relevant = true
@@ -220,7 +203,18 @@ SimpleEventHook({
 			return
 		end
 		log:info("port-added: relevant port: " .. alias)
-		local source = event:get_source()
+		-- Any link involving this port was destroyed by PipeWire when the port
+		-- disappeared. Clear stale active_links entries so try_create_links will
+		-- recreate them.
+		for _, spec in ipairs(LINKS) do
+			if alias == spec.output or alias == spec.input then
+				local key = link_key(spec.output, spec.input)
+				if active_links[key] then
+					log:info("port-added: clearing stale link: " .. key)
+					active_links[key] = nil
+				end
+			end
+		end
 		try_create_links(source)
 	end,
 }):register()

@@ -171,4 +171,54 @@ SimpleEventHook({
 	end,
 }):register()
 
+SimpleEventHook({
+	name = "auto-links/port-removed",
+	interests = {
+		EventInterest({
+			Constraint({ "event.type", "=", "port-removed" }),
+		}),
+	},
+	execute = function(event)
+		local props = event:get_properties()
+		local node_name = props["node.name"] or ""
+		local port_name = props["port.name"] or ""
+		local alias = node_name .. ":" .. port_name
+		for _, spec in ipairs(LINKS) do
+			if alias == spec.output or alias == spec.input then
+				local key = link_key(spec.output, spec.input)
+				log:info("port-removed: clearing link: " .. key)
+				active_links[key] = nil
+			end
+		end
+	end,
+}):register()
+
+SimpleEventHook({
+	name = "auto-links/port-added",
+	interests = {
+		EventInterest({
+			Constraint({ "event.type", "=", "port-added" }),
+		}),
+	},
+	execute = function(event)
+		local props = event:get_properties()
+		local node_name = props["node.name"] or ""
+		local port_name = props["port.name"] or ""
+		local alias = node_name .. ":" .. port_name
+		local relevant = false
+		for _, spec in ipairs(LINKS) do
+			if alias == spec.output or alias == spec.input then
+				relevant = true
+				break
+			end
+		end
+		if not relevant then
+			return
+		end
+		log:info("port-added: relevant port: " .. alias)
+		local source = event:get_source()
+		try_create_links(source)
+	end,
+}):register()
+
 log:info("script loaded, hooks registered")

@@ -183,6 +183,8 @@ SimpleEventHook({
 		local node_name = props["node.name"] or ""
 		local port_name = props["port.name"] or ""
 		local alias = node_name .. ":" .. port_name
+
+		log:info("port-removed event: port.name=" .. alias)
 		for _, spec in ipairs(LINKS) do
 			if alias == spec.output or alias == spec.input then
 				local key = link_key(spec.output, spec.input)
@@ -206,6 +208,8 @@ SimpleEventHook({
 		local port_name = props["port.name"] or ""
 		local alias = node_name .. ":" .. port_name
 		local relevant = false
+
+		log:info("port-added event: port.name=" .. alias)
 		for _, spec in ipairs(LINKS) do
 			if alias == spec.output or alias == spec.input then
 				relevant = true
